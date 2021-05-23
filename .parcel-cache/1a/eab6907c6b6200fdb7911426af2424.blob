@@ -1,0 +1,9 @@
+var _d = require("d3");
+var _topojsonClient = require("topojson-client");
+const europejson = require("./europe.json");
+const aProjection = _d.geoMercator();
+const geoPath = _d.geoPath().projection(aProjection);
+const geojson = _topojsonClient.feature(europejson, europejson.objects.continent_Europe_subunits);
+const svg = _d.select("body").append("svg").attr("width", 1024).attr("height", 800).attr("style", "background-color: #FBFAF0");
+svg.selectAll("path").data(geojson["features"]).enter().append("path").// data loaded from json file
+attr("d", geoPath);

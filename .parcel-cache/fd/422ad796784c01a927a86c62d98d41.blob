@@ -1,0 +1,20 @@
+var _d = require("d3");
+var _topojsonClient = require("topojson-client");
+var _communities = require("./communities");
+var _stats = require("./stats");
+const maxAffected = _stats.stats.reduce((max, item) => item.value > max ? item.value : max, 0);
+const affectedRadiusScale = _d.scaleLinear().domain([0, maxAffected]).range([0, 50]);
+// 50 pixel max radius, we could calculate it relative to width and height
+const calculateRadiusBasedOnAffectedCases = comunidad => {
+  const entry = _stats.stats.find(item => item.name === comunidad);
+  return entry ? affectedRadiusScale(entry.value) : 0;
+};
+const spainjson = require("./spain.json");
+const d3Composite = require("d3-composite-projections");
+d3Composite.geoConicConformalSpain().scale(3300).translate([500, 400]);
+const aProjection = _d.geoMercator().scale(2000).translate([650, 1800]);
+const geoPath = _d.geoPath().projection(aProjection);
+const geojson = _topojsonClient.feature(spainjson, spainjson.objects.ESP_adm1);
+const svg = _d.select("body").append("svg").attr("width", 1024).attr("height", 800).attr("style", "background-color: #FBFAF0");
+svg.selectAll("path").data(geojson["features"]).enter().append("path").attr("class", "country").attr("d", geoPath);
+svg.selectAll("circle").data(_communities.latLongCommunities).enter().append("circle").attr("class", "affected-marker").attr("r", d => calculateRadiusBasedOnAffectedCases(d.name)).attr("cx", d => aProjection([d.long, d.lat])[0]).attr("cy", d => aProjection([d.long, d.lat])[1]);

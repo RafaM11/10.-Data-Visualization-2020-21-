@@ -1,0 +1,13 @@
+.country {
+  stroke-width: 1;
+  stroke: #2f4858;
+  fill: #008c86;
+}
+
+.selected-country {
+  stroke-width: 1;
+  stroke: #bc5b40;
+  fill: #f88f70;
+}
+
+/*# sourceMappingURL=index.HASH_REF_1249dde7be17748f9cb2f136f6de4f69.css.map */
